@@ -34,5 +34,18 @@ allprojects {
         google()
         jcenter()
         maven { url 'https://www.jitpack.io' }
+        maven {
+            name = "TekoMaven"
+            url = uri("https://maven.pkg.github.com/teko-vn/tracker-android")
+
+            credentials {
+                Properties properties = new Properties()
+                properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+                username = properties.getProperty('userName')
+
+                password = properties.getProperty('userToken')
+            }
+        }
     }
 }

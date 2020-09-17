@@ -167,6 +167,8 @@ android {
     }
 
     packagingOptions {
+        exclude("META-INF/*.kotlin_module")
+
         pickFirst "lib/armeabi-v7a/libc++_shared.so"
         pickFirst "lib/arm64-v8a/libc++_shared.so"
         pickFirst "lib/x86/libc++_shared.so"
@@ -194,6 +196,10 @@ dependencies {
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+
+    implementation "vn.teko.terra:react-native-bridge:0.1.9"
+    implementation "vn.teko.android.payment:react-native-bridge:0.4.0"
+
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'
     }
