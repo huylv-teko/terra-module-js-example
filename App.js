@@ -1,12 +1,18 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect } from "react";
-import { Button, StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Button, StyleSheet, Text, View, TextInput } from "react-native";
 import { PaymentModule } from "terra-module-js";
 
+let paymentModule = new PaymentModule();
+
 export default function App() {
+  const [orderCode, setOrderCode] = useState("");
+  const [orderId, setOrderId] = useState("");
+  const [amount, setAmount] = useState(0);
+
   useEffect(() => {
-    this.paymentModule = new PaymentModule();
-    this.paymentModule
+    // paymentModule
+    paymentModule
       .initPaymentGateway(
         "PVSDK1",
         "PE1118CC50322",
@@ -16,13 +22,13 @@ export default function App() {
       )
       .then((result) => {
         if (result.status_code === 200) {
-          this.paymentModule.addCashMethod("1", "2", "VNPAY").then((result) => {
+          paymentModule.addCashMethod("1", "2", "VNPAY").then((result) => {
             console.log(result);
           });
-          this.paymentModule.addQrMethod("VNPAY").then((result) => {
+          paymentModule.addQrMethod("VNPAY").then((result) => {
             console.log(result);
           });
-          this.paymentModule.addSposMethod("4814", "VNPAY").then((result) => {
+          paymentModule.addSposMethod("4814", "VNPAY").then((result) => {
             console.log(result);
           });
         } else {
@@ -32,8 +38,11 @@ export default function App() {
   }, []);
 
   const startPayment = () => {
-    this.paymentModule
-      .startPayment("1", "2", "", 10000, 1000)
+    if (orderCode === "" || orderId === "" || amount === 0) {
+      return;
+    }
+    paymentModule
+      .startPayment(orderId, orderCode, "", amount, 1000)
       .then((result) => {
         switch (result.status_code) {
           case 200:
@@ -50,8 +59,27 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to dsstart working on your app!</Text>
+      <TextInput
+        style={{ borderWidth: 1, width: 200, margin: 10 }}
+        placeholder="Order code"
+        onChangeText={setOrderCode}
+      />
+      <TextInput
+        style={{ borderWidth: 1, width: 200, margin: 10 }}
+        placeholder="Order id"
+        onChangeText={setOrderId}
+      />
+      <TextInput
+        style={{ borderWidth: 1, width: 200, margin: 10 }}
+        placeholder="Amount"
+        keyboardType="numeric"
+        onChangeText={setAmount}
+      />
       <Button title="Click to pay" onPress={startPayment} />
+      <Text>
+        Chú ý: orderId, orderCode cần cung cấp đúng với merchant có yêu cầu bắt
+        buộc phải tạo đơn thành công
+      </Text>
       <StatusBar style="auto" />
     </View>
   );
@@ -63,5 +91,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+    padding: 20,
   },
 });
